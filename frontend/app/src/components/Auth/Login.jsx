@@ -4,7 +4,7 @@ import Loader from '../Loader';
 import Message from '../Message';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios'
-
+import API from "../api/axios";
 
 function LoginScreen() {
   const navigate = useNavigate();
@@ -120,7 +120,7 @@ function LoginScreen() {
         },
       };
 
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/api/auth/login",
         FormValues,
         config

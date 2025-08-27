@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { Container, Row, Col, ListGroup, Form, Button, Card } from "react-bootstrap";
+import API from "../api/axios";
 import axios from "axios";
+
 
 const socket = io("http://localhost:5000");
 
@@ -32,7 +34,7 @@ function ChatPage() {
           },
         };
 
-        const { data } = await axios.get("http://localhost:5000/api/users/following", config);
+        const { data } = await API.get("/api/users/following", config);
         setUsers(data);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
@@ -70,12 +72,12 @@ function ChatPage() {
         },
       };
 
-      const { data: chat } = await axios.post(`/api/chats/${user._id}`, {}, config);
+      const { data: chat } = await API.post(`/api/chats/${user._id}`, {}, config);
       setSelectedUser(user);
       setChatId(chat._id);
 
       // ✅ fetch messages separately
-      const { data: msgs } = await axios.get(`/api/chats/message/${chat._id}`, config);
+      const { data: msgs } = await API.get(`/api/chats/message/${chat._id}`, config);
       setMessages(msgs);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -99,8 +101,8 @@ function ChatPage() {
       };
 
       // ✅ Call backend to save & emit
-      const { data } = await axios.post(
-        `http://localhost:5000/api/chats/message/${chatId}`,
+      const { data } = await API.post(
+        `/api/chats/message/${chatId}`,
         { content: newMessage },
         config
       );

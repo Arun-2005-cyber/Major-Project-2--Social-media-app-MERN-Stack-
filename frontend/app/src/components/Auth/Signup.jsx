@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import Message from "../Message";
 import Loader from "../Loader";
 import axios from "axios";
+import API from "../api/axios";
 
 function Signup() {
   const navigate = useNavigate();
@@ -144,8 +145,8 @@ function Signup() {
         },
       };
 
-      const { data } = await axios.post(
-        "/api/auth/signup",
+      const { data } = await API.post(
+        `/api/auth/signup`,
         formValues,
         config
       );

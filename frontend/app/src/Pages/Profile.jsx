@@ -5,7 +5,7 @@ import axios from 'axios';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { Link, useNavigate } from 'react-router-dom';
-
+import API from "../api/axios";
 
 function Profile() {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ function Profile() {
             Authorization: `Bearer ${parsedUser.token}`
           }
         };
-        const { data } = await axios.get("/api/users/profile", config);
+        const { data } = await API.get("/api/users/profile", config);
         setUser(data)
 
         if (data.twoFactorAuthSecret) {
@@ -91,7 +91,7 @@ function Profile() {
         }
       };
 
-      const { data } = await axios.get(`/api/users/search?keyword=${keyword}`, config)
+      const { data } = await API.get(`/api/users/search?keyword=${keyword}`, config)
       setResults(data)
     }
     catch (err) {
@@ -122,7 +122,7 @@ function Profile() {
         }
       };
 
-      const { data } = await axios.post("/api/auth/enable-2fa", {}, config);
+      const { data } = await API.post("/api/auth/enable-2fa", {}, config);
 
 
       QRCode.toDataURL(data.otpauthUrl, { width: 200, margin: 2 }, (err, url) => {
@@ -164,7 +164,7 @@ function Profile() {
       const formData = new FormData();
       formData.append("profilePicture", profilePicture);
 
-      const { data } = await axios.post("/api/users/profile/upload", formData, config);
+      const { data } = await API.post("/api/users/profile/upload", formData, config);
 
       setMessage("Profile Picture is Updated Successfully");
       setUser({ ...user, profilePicture: data.profilePicture })
@@ -197,10 +197,10 @@ function Profile() {
           Authorization: `Bearer ${parsedUser.token}`
         }
       };
-      await axios.post(`/api/users/follow/${userId}`, {}, config)
+      await API.post(`/api/users/follow/${userId}`, {}, config)
       setMessage("User followed Successfully")
 
-      const { data } = await axios.get("/api/users/profile", config)
+      const { data } = await API.get("/api/users/profile", config)
       setUser(data)
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -224,10 +224,10 @@ function Profile() {
           Authorization: `Bearer ${parsedUser.token}`
         }
       };
-      await axios.post(`/api/users/unfollow/${userId}`, {}, config)
+      await API.post(`/api/users/unfollow/${userId}`, {}, config)
       setMessage("User Unfollowed Successfully")
 
-      const { data } = await axios.get("/api/users/profile", config)
+      const { data } = await API.get("/api/users/profile", config)
       setUser(data)
     } catch (err) {
       setError(err.response?.data?.message || err.message);

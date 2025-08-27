@@ -6,7 +6,7 @@ import Message from '../components/Message';
 import PostForm from '../components/Posts/PostForm';
 import PostList from '../components/Posts/PostList';
 import ChatPage from '../components/Chat/ChatPage';
-
+import API from "../api/axios";
 
 
 function Home() {
@@ -25,7 +25,7 @@ function Home() {
           Authorization: `Bearer ${userInfo.token}`,
         },
       };
-      const { data } = await axios.get('/api/posts', config);
+      const { data } = await API.get('/api/posts', config);
       setPosts(data);
     } catch (err) {
       setError(err.response?.data?.message || err.message);

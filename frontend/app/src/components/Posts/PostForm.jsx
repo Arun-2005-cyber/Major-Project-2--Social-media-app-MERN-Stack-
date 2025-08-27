@@ -3,7 +3,7 @@ import { Form, Button } from 'react-bootstrap'
 import axios from 'axios'
 import Loader from '../Loader'
 import Message from '../Message'
-
+import API from "../api/axios";
 
 function PostForm({ fetchPosts }) {
 
@@ -35,7 +35,7 @@ function PostForm({ fetchPosts }) {
         }
       };
 
-      await axios.post('/api/posts', formData, config);
+      await API.post('/api/posts', formData, config);
       setContent("")
       setImage(null)
       fetchPosts()

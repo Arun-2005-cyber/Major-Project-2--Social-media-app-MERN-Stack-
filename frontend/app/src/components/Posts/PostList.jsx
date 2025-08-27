@@ -4,6 +4,7 @@ import axios from 'axios'
 import Loader from '../Loader'
 import Message from '../Message'
 import { Trash } from 'lucide-react'
+import API from "../api/axios";
 
 function PostList({ posts, fetchPosts }) {
   const [loading, setLoading] = useState(false)
@@ -26,7 +27,7 @@ function PostList({ posts, fetchPosts }) {
           Authorization: `Bearer ${userInfo.token}`
         }
       }
-      await axios.delete(`/api/posts/${deletePostId}`, config)
+      await API.delete(`/api/posts/${deletePostId}`, config)
       setShowModal(false)
       fetchPosts()
     } catch (err) {
@@ -44,7 +45,7 @@ function PostList({ posts, fetchPosts }) {
           Authorization: `Bearer ${userInfo.token}`
         }
       }
-      await axios.post(
+      await API.post(
         `/api/posts/${postId}/comments`,
         { content: commentContent[postId] },
         config
