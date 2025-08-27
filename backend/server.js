@@ -15,9 +15,22 @@ dotenv.config();
 // ✅ Initialize express app
 const app = express();
 
-// ✅ CORS middleware
+// ✅ Allow multiple origins for CORS (Netlify + localhost)
+const allowedOrigins = [
+  "https://socia-media.netlify.app",  // deployed frontend
+  "http://localhost:3000"             // dev frontend
+];
+
 app.use(cors({
-  origin: "https://socia-media.netlify.app", // your frontend
+  origin: function (origin, callback) {
+    // allow requests with no origin (like curl or Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = "CORS policy error: This origin is not allowed.";
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
 
@@ -34,7 +47,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "https://socia-media.netlify.app",
+    origin: allowedOrigins,
     credentials: true
   },
 });
@@ -47,10 +60,13 @@ app.use((req, res, next) => {
 
 // ✅ Routes
 app.get("/", (req, res) => {
-  res.send('API is running');
+  res.send("✅ API is running");
 });
 
+// ✅ Static uploads
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+// ✅ API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
@@ -65,9 +81,6 @@ io.on("connection", (socket) => {
     console.log(`User joined chat: ${chatId}`);
   });
 
-  // ❌ Removed socket.on("sendMessage") here
-  // because we will emit from controller only
-
   socket.on("disconnect", () => {
     console.log("❌ Client disconnected", socket.id);
   });
@@ -79,4 +92,4 @@ server.listen(PORT, () =>
   console.log(`🚀 Server running on port ${PORT}`)
 );
 
-module.exports = { io }; // optional if you want to import io in controllers
+module.exports = { io };
