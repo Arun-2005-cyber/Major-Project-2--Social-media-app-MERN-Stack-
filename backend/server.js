@@ -9,8 +9,7 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const morgan = require("morgan");  
-
+const morgan = require("morgan");
 
 dotenv.config();
 
@@ -24,24 +23,19 @@ if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// ✅ Allow multiple origins for CORS (Netlify + localhost)
+// ✅ Allowed origins for frontend
 const allowedOrigins = [
   "https://socia-media.netlify.app", // deployed frontend
   "http://localhost:3000",           // local frontend
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like curl or Postman)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = "CORS policy error: This origin is not allowed.";
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true,
-}));
+// ✅ CORS middleware for Express
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
 
 // ✅ Body parser
 app.use(express.json());
@@ -49,22 +43,23 @@ app.use(express.json());
 // ✅ Create HTTP server
 const server = http.createServer(app);
 
-// ✅ Attach socket.io
+// ✅ Attach socket.io with CORS
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
     origin: allowedOrigins,
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-// ✅ Attach io to every request BEFORE routes
+// ✅ Attach io to requests (if needed inside routes)
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
 
-// ✅ Routes
+// ✅ API test route
 app.get("/", (req, res) => {
   res.send("✅ API is running");
 });
@@ -78,13 +73,20 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/chats", chatRoutes);
 
-// ✅ Socket.io connection
+// ✅ Socket.io connection handling
 io.on("connection", (socket) => {
   console.log("⚡ New client connected:", socket.id);
 
+  // Join a chat room
   socket.on("joinChat", (chatId) => {
     socket.join(chatId);
-    console.log(`User joined chat: ${chatId}`);
+    console.log(`User ${socket.id} joined chat: ${chatId}`);
+  });
+
+  // Optional: relay message event if you later emit directly via socket
+  socket.on("sendMessage", (msg) => {
+    console.log("📩 Message received via socket:", msg);
+    io.to(msg.chatId).emit("messageReceived", msg);
   });
 
   socket.on("disconnect", () => {
