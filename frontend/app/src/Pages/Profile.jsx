@@ -258,16 +258,13 @@ function Profile() {
             <div className="text-center">
               {user.profilePicture ? (
                 <img
-                  src={
-                    user.profilePicture
-                      ? `https://major-project-2-social-media-app-mern.onrender.com/${user.profilePicture.replace(/^\/+/, "")}`
-                      : "https://via.placeholder.com/150"
-                  }
+                  src={user.profilePicture || "https://via.placeholder.com/150"}
                   alt="profile"
                   className="rounded-circle"
                   width="150"
                   height="150"
                 />
+
 
               ) : (
                 <div className='placeholder rounded-circle mb-3' style={{ width: "100px", height: "100px" }}></div>

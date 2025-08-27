@@ -76,19 +76,13 @@ function PostList({ posts, fetchPosts }) {
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center">
                   <img
-                    src={
-                      post.user.profilePicture
-                        ? `https://major-project-2-social-media-app-mern.onrender.com/${post.user.profilePicture.replace(/^\/+/, "")}`
-                        : "https://via.placeholder.com/50"
-                    }
+                    src={post.user.profilePicture || "https://via.placeholder.com/50"}
                     alt={post.user.username}
                     className="rounded-circle me-2"
                     style={{ width: "40px", height: "40px", objectFit: "cover" }}
                   />
-
                   <span className="fw-bold">{post.user.username}</span>
                 </div>
-
                 <Button
                   variant="outline-danger"
                   size="sm"

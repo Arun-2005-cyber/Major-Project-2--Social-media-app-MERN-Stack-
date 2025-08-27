@@ -1,15 +1,42 @@
-const express=require("express");
-const {protect}=require('../middleware/authMiddleWare');
-const{uploadProfilePicture,getUserProfile,searchUsers,unfollowUser,followUser,getFollowing, 
-  getFollowers }=require("../controllers/userController");
-const router=express.Router();
+const express = require("express");
+const { protect } = require("../middleware/authMiddleWare");
+const {
+  uploadProfilePicture,
+  getUserProfile,
+  searchUsers,
+  unfollowUser,
+  followUser,
+  getFollowing,
+  getFollowers,
+} = require("../controllers/userController");
 
-router.route('/profile/upload').post(protect,uploadProfilePicture);
-router.route("/profile").get(protect,getUserProfile).put(protect,uploadProfilePicture);
-router.route("/search").get(protect,searchUsers);
-router.route("/follow/:id").post(protect,followUser)
-router.route("/unfollow/:id").post(protect,unfollowUser)
-router.route("/following").get(protect, getFollowing);
-router.route("/followers").get(protect, getFollowers);
+const upload = require("../middleware/upload"); // ✅ multer-cloudinary setup
 
-module.exports=router;
+const router = express.Router();
+
+// ✅ Upload profile picture (POST)
+router.post(
+  "/profile/upload",
+  protect,
+  upload.single("profilePicture"),
+  uploadProfilePicture
+);
+
+// ✅ Get profile (GET) / Update profile picture (PUT)
+router
+  .route("/profile")
+  .get(protect, getUserProfile)
+  .put(protect, upload.single("profilePicture"), uploadProfilePicture);
+
+// ✅ Search users
+router.get("/search", protect, searchUsers);
+
+// ✅ Follow / Unfollow
+router.post("/follow/:id", protect, followUser);
+router.post("/unfollow/:id", protect, unfollowUser);
+
+// ✅ Following / Followers
+router.get("/following", protect, getFollowing);
+router.get("/followers", protect, getFollowers);
+
+module.exports = router;
