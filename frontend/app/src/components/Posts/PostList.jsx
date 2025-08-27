@@ -78,15 +78,14 @@ function PostList({ posts, fetchPosts }) {
                   <img
                     src={
                       post.user.profilePicture
-                        ? post.user.profilePicture.startsWith("http")
-                          ? post.user.profilePicture
-                          : `https://major-project-2-social-media-app-mern.onrender.com/${post.user.profilePicture}`
+                        ? `https://major-project-2-social-media-app-mern.onrender.com/${post.user.profilePicture.replace(/^\/+/, "")}`
                         : "https://via.placeholder.com/50"
                     }
                     alt={post.user.username}
                     className="rounded-circle me-2"
                     style={{ width: "40px", height: "40px", objectFit: "cover" }}
                   />
+
                   <span className="fw-bold">{post.user.username}</span>
                 </div>
 

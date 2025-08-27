@@ -257,7 +257,18 @@ function Profile() {
 
             <div className="text-center">
               {user.profilePicture ? (
-                <img src={`https://major-project-2-social-media-app-mern.onrender.com/${user.profilePicture}`} alt="profile" className='rounded-circle' width='150' height='150' />
+                <img
+                  src={
+                    user.profilePicture
+                      ? `https://major-project-2-social-media-app-mern.onrender.com/${user.profilePicture.replace(/^\/+/, "")}`
+                      : "https://via.placeholder.com/150"
+                  }
+                  alt="profile"
+                  className="rounded-circle"
+                  width="150"
+                  height="150"
+                />
+
               ) : (
                 <div className='placeholder rounded-circle mb-3' style={{ width: "100px", height: "100px" }}></div>
               )}
@@ -334,7 +345,7 @@ function Profile() {
               {results.map((result) => (
                 <ListGroup.Item key={result._id}>
                   <Link to={`/user/${result._id}`}>{result.username}</Link>
-                  <Button variant='success' className='mt-4 my-4 mx-4' onClick={()=>followUser(result._id)}>
+                  <Button variant='success' className='mt-4 my-4 mx-4' onClick={() => followUser(result._id)}>
                     Follow
                   </Button>
                 </ListGroup.Item>
@@ -374,8 +385,8 @@ function Profile() {
                             </Link>
                           </Card.Title>
 
-                          <Button variant='success' className='ms-2 btn-sm' onClick={()=>followUser(follower._id)}>
-                              follow
+                          <Button variant='success' className='ms-2 btn-sm' onClick={() => followUser(follower._id)}>
+                            follow
                           </Button>
                         </Card.Body>
                       </Card>
@@ -417,8 +428,8 @@ function Profile() {
                             </Link>
                           </Card.Title>
 
-                          <Button variant='danger' className='ms-2 btn-sm' onClick={()=>unfollowUser(following._id)}>
-                                Unfollow
+                          <Button variant='danger' className='ms-2 btn-sm' onClick={() => unfollowUser(following._id)}>
+                            Unfollow
                           </Button>
                         </Card.Body>
                       </Card>
