@@ -257,7 +257,7 @@ function Profile() {
 
             <div className="text-center">
               {user.profilePicture ? (
-                <img src={user.profilePicture} alt="profile" className='rounded-circle' width='150' height='150' />
+                <img src={`https://major-project-2-social-media-app-mern.onrender.com/${user.profilePicture}`} alt="profile" className='rounded-circle' width='150' height='150' />
               ) : (
                 <div className='placeholder rounded-circle mb-3' style={{ width: "100px", height: "100px" }}></div>
               )}
