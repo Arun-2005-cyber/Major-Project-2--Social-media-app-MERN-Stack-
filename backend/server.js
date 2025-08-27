@@ -17,7 +17,7 @@ const app = express();
 
 // ✅ CORS middleware
 app.use(cors({
-  origin: "http://localhost:3000", // your frontend
+  origin: "https://socia-media.netlify.app/", // your frontend
   credentials: true
 }));
 
@@ -34,7 +34,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://socia-media.netlify.app/",
     credentials: true
   },
 });
