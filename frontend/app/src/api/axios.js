@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, // will take from .env
+  baseURL: "https://major-project-2-social-media-app-mern.onrender.com", // will take from .env
 });
 
 export default API;
