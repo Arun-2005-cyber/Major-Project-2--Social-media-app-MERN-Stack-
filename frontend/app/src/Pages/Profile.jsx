@@ -168,6 +168,8 @@ function Profile() {
 
       setMessage("Profile Picture is Updated Successfully");
       setUser({ ...user, profilePicture: data.profilePicture })
+      console.log("PROFILE PICTURE VALUE:", user.profilePicture);
+
     }
     catch (err) {
       setError(
