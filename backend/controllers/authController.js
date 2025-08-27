@@ -13,8 +13,12 @@ exports.signup = async (req, res) => {
     const userExistsEmail = await User.findOne({ email });
     const userExistsUsername = await User.findOne({ username });
 
-    if (userExistsEmail || userExistsUsername) {
-      return res.status(400).json({ message: "User Already Exists" });
+    if (userExistsEmail) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    if (userExistsUsername) {
+      return res.status(400).json({ message: "Username already taken" });
     }
 
     const user = await User.create({ username, email, password });
@@ -24,16 +28,21 @@ exports.signup = async (req, res) => {
       username: user.username,
       email: user.email,
       token: generateToken(user._id),
-      twoFactorAuth: user.twoFactorAuth || false, // safer
+      twoFactorAuth: user.twoFactorAuth || false,
     });
+
   } catch (err) {
     console.error("❌ Signup error:", err);
+
+    // ✅ Catch Mongo duplicate key errors
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern)[0];
+      return res.status(400).json({ message: `${field} already exists` });
+    }
+
     res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
-
-
-
 
 exports.login = async (req, res) => {
   try {
@@ -45,10 +54,9 @@ exports.login = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user || !(await user.matchPassword(password))) {
-      return res.status(401).json({ message: "Invalid Credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // ✅ If 2FA enabled
     if (user.twoFactorAuth) {
       if (!token) {
         return res.status(400).json({ message: "2FA token required" });
@@ -67,7 +75,7 @@ exports.login = async (req, res) => {
       twoFactorAuth: user.twoFactorAuth || false
     });
   } catch (err) {
-    console.error("❌ Login error:", err);
+    console.error("❌ Login error details:", err);
     res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
@@ -80,8 +88,6 @@ exports.enableTwoFactorAuth = async (req, res) => {
     }
 
     const secret = generateSecret(user.username);
-
-    // Save secret + enable 2FA
     user.twoFactorAuthSecret = secret.base32;
     user.twoFactorAuth = true;
     await user.save();
@@ -96,5 +102,3 @@ exports.enableTwoFactorAuth = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
-
-
