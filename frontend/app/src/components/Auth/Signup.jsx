@@ -22,16 +22,12 @@ function Signup() {
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    termsAccepted: false,
   });
 
   const [formErrors, setFormErrors] = useState({
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    termsAccepted: "",
   });
 
   const handleChange = (e) => {
@@ -109,16 +105,12 @@ function Signup() {
     setFormValues({
       username: "",
       email: "",
-      password: "",
-      confirmPassword: "",
-      termsAccepted: false,
+      password: ""
     });
     setFormErrors({
       username: "",
       email: "",
       password: "",
-      confirmPassword: "",
-      termsAccepted: "",
     });
   };
 
