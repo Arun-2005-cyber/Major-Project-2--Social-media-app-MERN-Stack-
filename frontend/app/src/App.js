@@ -13,6 +13,7 @@ import ChatPage from './components/Chat/ChatPage';
 function App() {
     const user = JSON.parse(localStorage.getItem("userInfo"));
   return (
+    <>
     <Router>
       <Header />
       <Container>
@@ -26,6 +27,8 @@ function App() {
 
       </Container>
     </Router>
+    </>
+    
   )
 }
 
