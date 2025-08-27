@@ -3,7 +3,8 @@ import { Form, Button } from 'react-bootstrap'
 import axios from 'axios'
 import Loader from '../Loader'
 import Message from '../Message'
-import API from "../api/axios";
+import API from "../../api/axios";
+
 
 function PostForm({ fetchPosts }) {
 

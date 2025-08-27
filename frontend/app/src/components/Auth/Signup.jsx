@@ -4,7 +4,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import Message from "../Message";
 import Loader from "../Loader";
 import axios from "axios";
-import API from "../api/axios";
+import API from "../../api/axios";
+
 
 function Signup() {
   const navigate = useNavigate();

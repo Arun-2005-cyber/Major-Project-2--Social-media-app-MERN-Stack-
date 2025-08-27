@@ -4,7 +4,8 @@ import Loader from '../Loader';
 import Message from '../Message';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios'
-import API from "../api/axios";
+import API from "../../api/axios";
+
 
 function LoginScreen() {
   const navigate = useNavigate();

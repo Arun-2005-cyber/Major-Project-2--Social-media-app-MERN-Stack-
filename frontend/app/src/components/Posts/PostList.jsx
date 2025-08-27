@@ -4,7 +4,8 @@ import axios from 'axios'
 import Loader from '../Loader'
 import Message from '../Message'
 import { Trash } from 'lucide-react'
-import API from "../api/axios";
+import API from "../../api/axios";
+
 
 function PostList({ posts, fetchPosts }) {
   const [loading, setLoading] = useState(false)
