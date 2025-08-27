@@ -9,6 +9,8 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const morgan = require("morgan");  
+
 
 dotenv.config();
 
@@ -17,6 +19,10 @@ connectDB();
 
 // ✅ Initialize express app
 const app = express();
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
 
 // ✅ Allow multiple origins for CORS (Netlify + localhost)
 const allowedOrigins = [
