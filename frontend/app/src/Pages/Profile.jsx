@@ -165,11 +165,9 @@ function Profile() {
       formData.append("profilePicture", profilePicture);
 
       const { data } = await API.post("/api/users/profile/upload", formData, config);
-
+      console.log("PROFILE PICTURE VALUE:", data.profilePicture);
       setMessage("Profile Picture is Updated Successfully");
       setUser({ ...user, profilePicture: data.profilePicture })
-      console.log("PROFILE PICTURE VALUE:", user.profilePicture);
-
     }
     catch (err) {
       setError(
