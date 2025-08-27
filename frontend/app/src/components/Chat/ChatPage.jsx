@@ -6,7 +6,15 @@ import API from "../../api/axios";
 import axios from "axios";
 
 
-const socket = io("http://localhost:5000");
+const socket = io(
+  process.env.NODE_ENV === "production"
+    ? "https://major-project-2-social-media-app-mern.onrender.com" // Render backend
+    : "http://localhost:5000", // Local backend
+  {
+    withCredentials: true,
+  }
+);
+
 
 function ChatPage() {
   const [users, setUsers] = useState([]);
