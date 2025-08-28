@@ -1,12 +1,8 @@
-const User = require("../models/userModel");
+const User = require("../models/User");
 
 // 📌 Upload Profile Picture
 const uploadProfilePicture = async (req, res) => {
-  
-
   try {
-    console.log("REQ FILE:", req.file);
-console.log("REQ BODY:", req.body);
     if (!req.file || !req.file.path) {
       return res.status(400).json({ message: "No file uploaded" });
     }
