@@ -41,7 +41,7 @@ const upload = multer({
 //@Routes POST /api/users/profile/upload
 
 // controllers/userController.js
-const User = require("../models/userModel");
+
 
 const uploadProfilePicture = asyncHandler(async (req, res) => {
   if (!req.file || !req.file.path) {
