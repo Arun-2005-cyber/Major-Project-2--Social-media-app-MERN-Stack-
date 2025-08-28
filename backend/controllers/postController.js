@@ -1,155 +1,119 @@
-const asyncHandler = require("express-async-handler");
-const multer = require("multer");
-const path = require("path");
-const Post = require("../models/Post")
-const fs = require("fs");
+const Post = require("../models/postModel");
 
-// Set up multer for file uploading
-
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, 'uploads/')
-    },
-    filename(req, file, cb) {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
+// 📌 Create Post
+const createPost = async (req, res) => {
+  try {
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({ message: "No image uploaded" });
     }
-})
 
-const upload = multer({
-    storage,
-    fileFilter(req, file, cb) {
-        const allowed = ['image/jpeg', 'image/png'];
-        if (allowed.includes(file.mimetype)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Invalid file type. Only JPEG and PNG are allowed.'));
-        }
+    const imageUrl = req.file.path; // ✅ Cloudinary URL
 
-    }
-})
+    const post = await Post.create({
+      user: req.user.id,
+      image: imageUrl,
+      caption: req.body.caption || "",
+    });
 
-//create a new post
-//POST/api/posts
-
-
-
-const createPost = asyncHandler(async (req, res) => {
-  const { content } = req.body;
-
-  if (!req.file || !req.file.path) {
-    return res.status(400).json({ message: "Image is required" });
+    res.status(201).json(post);
+  } catch (error) {
+    console.error("Create Post Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
+};
 
-  const post = new Post({
-    user: req.user._id,
-    content,
-    image: req.file.path, 
-  });
+// 📌 Get All Posts
+const getPost = async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate("user", "username profilePicture")
+      .sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (error) {
+    console.error("Get Posts Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
 
-  const createdPost = await post.save();
-  res.status(201).json(createdPost);
-});
-
-
-
-//Get post from following users or own post
-// GET /api/posts
-
-const getPost=asyncHandler(async(req,res)=>{
-    const user=req.user;
-    const following=user.following;
-    const posts=await Post.find({
-        $or:[
-            {user:{$in:following}},
-            {user:user._id}
-        ]
-    })
-    .populate('user','username profilePicture')
-    .populate('comments.user','username profilePicture')
-
-
-    res.json(posts)
-})
-
-//create a new comment
-//POST /api/posts/:id/comments
-
-const createComment=asyncHandler(async(req,res)=>{
-    const {content}=req.body;
-    const post=await Post.findById(req.params.id);
-    if(post){
-        const comment={
-            user:req.user._id,
-            content,
-        };
-        post.comments.push(comment);
-        await post.save();
-
-        res.status(201).json({message:"Comment Added"})
+// 📌 Get Post By ID
+const getPostById = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate(
+      "user",
+      "username profilePicture"
+    );
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
     }
-    else{
-        res.status(401);
-        throw new Error("post not found")
-    }
-})
+    res.json(post);
+  } catch (error) {
+    console.error("Get Post By ID Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
 
-//get post by id
-// /api/posts/:id
+// 📌 Get User Posts
+const getUserPosts = async (req, res) => {
+  try {
+    const posts = await Post.find({ user: req.params.userId }).sort({
+      createdAt: -1,
+    });
+    res.json(posts);
+  } catch (error) {
+    console.error("Get User Posts Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
 
-const getPostById=asyncHandler(async(req,res)=>{
-    const post=await Post.findById(req.params.id)
-    .populate('user','username profilePicture')
-    .populate('comments.user','username profilePicture')
-
-    if(post){
-        res.json(post)
-    }
-    else{
-        res.status(404);
-        throw new Error('Post not found')
+// 📌 Create Comment
+const createComment = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
     }
 
-});
+    const comment = {
+      user: req.user.id,
+      text: req.body.text,
+    };
 
-//get users post
+    post.comments.push(comment);
+    await post.save();
 
-const getUserPosts=asyncHandler(async(req,res)=>{
-    const posts=await Post.find({user:req.params.userId}).populate('user','username profilePicture').populate('comments.user','username');
-    res.json(posts)
-});
+    res.json(post);
+  } catch (error) {
+    console.error("Create Comment Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
 
-//delete post
-
-const deletePost = asyncHandler(async (req, res) => {
+// 📌 Delete Post
+const deletePost = async (req, res) => {
+  try {
     const post = await Post.findById(req.params.id);
 
-    if (post) {
-        if (post.user.toString() !== req.user._id.toString()) {
-            res.status(401);
-            throw new Error("You are not authorized to delete this post");
-        }
-
-        // Delete uploaded image file if exists
-        if (post.image) {
-            const imagePath = path.join(__dirname, '..', post.image);
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            }
-        }
-
-        await Post.deleteOne({ _id: req.params.id });
-        res.json({ message: "Post Removed" });
-    } else {
-        res.status(404);
-        throw new Error("Post not found");
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
     }
-});
 
-module.exports={
-    createPost,
-    getPost,
-    createComment,
-    getPostById,
-    getUserPosts,
-    deletePost
-}
+    if (post.user.toString() !== req.user.id) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    await post.deleteOne();
+    res.json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Delete Post Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+module.exports = {
+  createPost,
+  getPost,
+  createComment,
+  getPostById,
+  getUserPosts,
+  deletePost,
+};
