@@ -64,7 +64,6 @@ const uploadProfilePicture = asyncHandler(async (req, res) => {
 
 
 
-
 // @route GET /api/users/profile
 const getUserProfile = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).populate('followers following').select('-password')

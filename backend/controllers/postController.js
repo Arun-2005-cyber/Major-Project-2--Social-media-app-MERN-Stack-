@@ -40,20 +40,15 @@ const createPost = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Image is required" });
   }
 
-  const imageUrl = req.file.path; // ✅ Cloudinary URL
-
   const post = new Post({
     user: req.user._id,
     content,
-    image: imageUrl,
+    image: req.file.path, 
   });
 
   const createdPost = await post.save();
   res.status(201).json(createdPost);
 });
-
-
-
 
 
 
