@@ -2,7 +2,11 @@ const Post = require("../models/postModel");
 
 // 📌 Create Post
 const createPost = async (req, res) => {
+  
+
   try {
+    console.log("REQ FILE:", req.file);
+console.log("REQ BODY:", req.body);
     if (!req.file || !req.file.path) {
       return res.status(400).json({ message: "No image uploaded" });
     }
