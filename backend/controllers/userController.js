@@ -40,25 +40,29 @@ const upload = multer({
 
 //@Routes POST /api/users/profile/upload
 
-const uploadProfilePicture = [
-    upload.single('profilePicture'),
-    asyncHandler(async (req, res) => {
-        const user = await User.findById(req.user._id);
+// controllers/userController.js
+const User = require("../models/userModel");
 
-        if (user) {
-            user.profilePicture = `/uploads/${req.file.filename}`;
-            await user.save();
+const uploadProfilePicture = asyncHandler(async (req, res) => {
+  if (!req.file || !req.file.path) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
 
-            res.json({
-                profilePicture: user.profilePicture
-            })
-        }
-        else {
-            res.status(404);
-            throw new Error('User not found')
-        }
-    })
-]
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  user.profilePicture = req.file.path; // ✅ Cloudinary URL
+  await user.save();
+
+  res.json({ profilePicture: user.profilePicture });
+});
+
+
+
+
 
 
 // @route GET /api/users/profile

@@ -34,23 +34,24 @@ const upload = multer({
 
 
 const createPost = asyncHandler(async (req, res) => {
-    const { content } = req.body;
-    if (!req.file) {
-        return res.status(400).json({ message: 'Image is required' });
-    }
+  const { content } = req.body;
 
+  if (!req.file || !req.file.path) {
+    return res.status(400).json({ message: "Image is required" });
+  }
 
-    const imagePath = `/uploads/${req.file.filename}`;
+  const imageUrl = req.file.path; // ✅ Cloudinary URL
 
-    const post = new Post({
-        user: req.user._id,
-        content,
-        image: imagePath
-    });
+  const post = new Post({
+    user: req.user._id,
+    content,
+    image: imageUrl,
+  });
 
-    const createdPost = await post.save();
-    res.status(201).json(createdPost);
+  const createdPost = await post.save();
+  res.status(201).json(createdPost);
 });
+
 
 
 
