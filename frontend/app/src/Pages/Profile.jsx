@@ -183,7 +183,7 @@ function Profile() {
 
 
 
-  const followUser = async (userId) => {
+const followUser = async (userId) => {
     try {
       setLoading(true);
 
@@ -210,11 +210,9 @@ function Profile() {
   }
 
 
-  const unfollowUser = async (userId) => {
+const unfollowUser = async (userId) => {
     try {
       setLoading(true);
-
-
       const userInfo = localStorage.getItem("userInfo");
       const parsedUser = JSON.parse(userInfo)
 

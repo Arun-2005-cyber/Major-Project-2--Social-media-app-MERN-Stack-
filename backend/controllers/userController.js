@@ -43,9 +43,14 @@ const uploadProfilePicture = async (req, res) => {
 };
 
 // 📌 Get User Profile
+// 📌 Get User Profile
 const getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user.id)
+      .select("-password")
+      .populate("followers", "username profilePicture")
+      .populate("following", "username profilePicture");
+
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (error) {
@@ -53,6 +58,7 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 // 📌 Search Users
 const searchUsers = async (req, res) => {
