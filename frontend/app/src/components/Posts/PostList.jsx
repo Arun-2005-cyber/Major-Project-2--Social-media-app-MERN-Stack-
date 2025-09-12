@@ -153,12 +153,21 @@ function PostList({ posts, fetchPosts }) {
                     <hr />
                     <Card.Text className="mt-3">
                       {post.comments.map((comment) => (
-                        <div key={comment._id}>
-                          <strong>{comment.user.username}:</strong>{" "}
-                          {comment.content}
+                        <div key={comment._id} className="d-flex align-items-center mb-2">
+                          <img
+                            src={comment.user?.profilePicture || "https://via.placeholder.com/30"}
+                            alt={comment.user?.username}
+                            className="rounded-circle me-2"
+                            style={{ width: "30px", height: "30px", objectFit: "cover" }}
+                          />
+                          <div>
+                            <strong>{comment.user?.username || "Unknown"}:</strong>{" "}
+                            {comment.content}
+                          </div>
                         </div>
                       ))}
                     </Card.Text>
+
                   </div>
                 </div>
               </div>
