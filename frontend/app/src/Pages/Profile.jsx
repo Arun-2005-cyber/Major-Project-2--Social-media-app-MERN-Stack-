@@ -6,7 +6,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { Link, useNavigate } from 'react-router-dom';
 import API from "../api/axios";
-import UserPost from "./UserPost"; // adjust the path if needed
+import UserPost from "../components/Posts/UserPost"; // adjust the path if needed
 
 
 function Profile() {
