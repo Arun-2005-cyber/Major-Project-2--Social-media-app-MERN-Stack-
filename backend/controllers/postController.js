@@ -16,7 +16,7 @@ console.log("REQ BODY:", req.body);
     const post = await Post.create({
       user: req.user.id,
       image: imageUrl,
-      caption: req.body.caption || "",
+      caption: req.body.content || "",
     });
 
     res.status(201).json(post);
