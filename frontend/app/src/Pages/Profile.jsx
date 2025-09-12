@@ -323,6 +323,7 @@ function Profile() {
             <h4 className="text-center">My Posts</h4>
             {user._id && <UserPost userId={user._id} />}
           </Card>
+
         </Col>
 
 
