@@ -185,7 +185,7 @@ function Profile() {
 
 
 
-const followUser = async (userId) => {
+  const followUser = async (userId) => {
     try {
       setLoading(true);
 
@@ -212,7 +212,7 @@ const followUser = async (userId) => {
   }
 
 
-const unfollowUser = async (userId) => {
+  const unfollowUser = async (userId) => {
     try {
       setLoading(true);
       const userInfo = localStorage.getItem("userInfo");
@@ -319,7 +319,13 @@ const unfollowUser = async (userId) => {
               )}
             </ul>
           </Card>
+          <Card className="mt-4 p-3">
+            <h4 className="text-center">My Posts</h4>
+            {user._id && <UserPost userId={user._id} />}
+          </Card>
         </Col>
+
+
 
         <Col md={7}>
           <Card className='mt-4 p-3'>
@@ -439,15 +445,6 @@ const unfollowUser = async (userId) => {
           </Card>
         </Col>
       </Row>
-
-      <Row className="mt-4">
-  <Col md={12}>
-    <Card className="p-3">
-      <h3 className="text-center">My Posts</h3>
-      {user._id && <UserPost userId={user._id} />}
-    </Card>
-  </Col>
-</Row>
 
     </Container>
   );
