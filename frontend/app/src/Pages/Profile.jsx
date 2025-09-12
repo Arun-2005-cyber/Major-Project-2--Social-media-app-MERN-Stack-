@@ -6,6 +6,8 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { Link, useNavigate } from 'react-router-dom';
 import API from "../api/axios";
+import UserPost from "./UserPost"; // adjust the path if needed
+
 
 function Profile() {
   const navigate = useNavigate();
@@ -437,6 +439,16 @@ const unfollowUser = async (userId) => {
           </Card>
         </Col>
       </Row>
+
+      <Row className="mt-4">
+  <Col md={12}>
+    <Card className="p-3">
+      <h3 className="text-center">My Posts</h3>
+      {user._id && <UserPost userId={user._id} />}
+    </Card>
+  </Col>
+</Row>
+
     </Container>
   );
 

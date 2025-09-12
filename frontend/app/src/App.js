@@ -10,6 +10,7 @@ import ChatPage from './components/Chat/ChatPage';
 
 
 
+
 function App() {
     const user = JSON.parse(localStorage.getItem("userInfo"));
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
            <Route path="/chats" element={<ChatPage user={user} />} />
+           
         </Routes>
 
       </Container>

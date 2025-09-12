@@ -61,15 +61,18 @@ const getPostById = async (req, res) => {
 // 📌 Get User Posts
 const getUserPosts = async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.params.userId }).sort({
-      createdAt: -1,
-    });
+    const posts = await Post.find({ user: req.params.userId })
+      .sort({ createdAt: -1 })
+      .populate("user", "username profilePicture")
+      .populate("comments.user", "username profilePicture");
+
     res.json(posts);
   } catch (error) {
     console.error("Get User Posts Error:", error);
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 // 📌 Create Comment
 const createComment = async (req, res) => {
