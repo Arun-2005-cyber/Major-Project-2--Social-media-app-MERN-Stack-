@@ -31,6 +31,7 @@ const getPost = async (req, res) => {
   try {
     const posts = await Post.find()
       .populate("user", "username profilePicture")
+      .populate("comments.user", "username profilePicture")
       .sort({ createdAt: -1 });
     res.json(posts);
   } catch (error) {
@@ -45,7 +46,8 @@ const getPostById = async (req, res) => {
     const post = await Post.findById(req.params.id).populate(
       "user",
       "username profilePicture"
-    );
+    )
+    .populate("comments.user", "username profilePicture");
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -85,12 +87,19 @@ const createComment = async (req, res) => {
     post.comments.push(comment);
     await post.save();
 
-    res.json(post);
+    // Return updated post with populated comments
+    const updatedPost = await Post.findById(req.params.id)
+      .populate("user", "username profilePicture")
+      .populate("comments.user", "username profilePicture");
+
+    res.json(updatedPost);
   } catch (error) {
     console.error("Create Comment Error:", error);
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
+
 
 // 📌 Delete Post
 const deletePost = async (req, res) => {
