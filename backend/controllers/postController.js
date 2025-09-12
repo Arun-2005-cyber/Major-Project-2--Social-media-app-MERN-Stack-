@@ -2,11 +2,11 @@ const Post = require("../models/Post");
 
 // 📌 Create Post
 const createPost = async (req, res) => {
-  
+
 
   try {
     console.log("REQ FILE:", req.file);
-console.log("REQ BODY:", req.body);
+    console.log("REQ BODY:", req.body);
     if (!req.file || !req.file.path) {
       return res.status(400).json({ message: "No image uploaded" });
     }
@@ -16,7 +16,7 @@ console.log("REQ BODY:", req.body);
     const post = await Post.create({
       user: req.user.id,
       image: imageUrl,
-      caption: req.body.content || "",
+      content: req.body.content || "",
     });
 
     res.status(201).json(post);
@@ -79,7 +79,7 @@ const createComment = async (req, res) => {
 
     const comment = {
       user: req.user.id,
-      text: req.body.text,
+      content: req.body.content,
     };
 
     post.comments.push(comment);
