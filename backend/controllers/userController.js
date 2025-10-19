@@ -156,6 +156,36 @@ const getFollowers = async (req, res) => {
   }
 };
 
+// 📌 Update Username
+const updateUsername = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if username is already taken
+    const existingUser = await User.findOne({ username: req.body.username });
+    if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
+    user.username = req.body.username || user.username;
+    const updatedUser = await user.save();
+
+    res.json({
+      message: "Username updated successfully",
+      username: updatedUser.username,
+    });
+  } catch (error) {
+    console.error("Update Username Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+
+
 module.exports = {
   uploadProfilePicture,
   getUserProfile,
@@ -164,4 +194,5 @@ module.exports = {
   followUser,
   getFollowing,
   getFollowers,
+  updateUsername,
 };
