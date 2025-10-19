@@ -19,6 +19,9 @@ function Profile() {
   const [keyword, setKeyword] = useState("")
   const [results, setResults] = useState([])
   const [profilePicture, setProfilePicture] = useState("")
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
+
 
 
 
@@ -235,6 +238,35 @@ function Profile() {
       setLoading(false);
     }
   }
+
+  const updateUsernameHandler = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError("");
+      setMessage("");
+
+      const userInfo = localStorage.getItem("userInfo");
+      const parsedUser = JSON.parse(userInfo);
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${parsedUser.token}`
+        }
+      };
+
+      const { data } = await API.put("/api/users/profile/update-username", { username: newUsername }, config);
+      setUser({ ...user, username: data.username });
+      setMessage("Username updated successfully!");
+      setIsEditingName(false);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Container>
       <Row>
@@ -285,9 +317,49 @@ function Profile() {
 
 
             <ul className="list-group">
-              <li className="list-group-item list-group-item-primary  d-flex justify-content-between align-items-center">
-                <strong>Username :</strong>{user.username}
+              <li className="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
+                <strong>Username :</strong>
+
+                {isEditingName ? (
+                  <Form onSubmit={updateUsernameHandler} className="d-flex ms-2">
+                    <Form.Control
+                      type="text"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      placeholder="Enter new username"
+                      size="sm"
+                      style={{ width: "150px" }}
+                    />
+                    <Button type="submit" variant="success" size="sm" className="ms-2">
+                      Confirm
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="ms-2"
+                      onClick={() => setIsEditingName(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </Form>
+                ) : (
+                  <div className="d-flex align-items-center">
+                    <span className="ms-2">{user.username}</span>
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      className="ms-2"
+                      onClick={() => {
+                        setNewUsername(user.username);
+                        setIsEditingName(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                )}
               </li>
+
               <li className="list-group-item list-group-item-secondary   d-flex justify-content-between align-items-center">
                 <strong>Email :</strong>{user.email}
               </li>
