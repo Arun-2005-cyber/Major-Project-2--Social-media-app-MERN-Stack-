@@ -16,10 +16,9 @@ function Home() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-
       const storedUser = localStorage.getItem("userInfo");
       if (!storedUser) {
-        navigate("/signin");
+        navigate("/signin", { replace: true });
         return;
       }
 
@@ -43,11 +42,14 @@ function Home() {
   useEffect(() => {
     const storedUser = localStorage.getItem("userInfo");
     if (!storedUser) {
-      navigate("/signin");
+      navigate("/signin", { replace: true });
     } else {
       fetchPosts();
     }
   }, []);
+
+  const storedUser = localStorage.getItem("userInfo");
+  if (!storedUser) return null;
 
   return (
     <Container>
