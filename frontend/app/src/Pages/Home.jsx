@@ -18,7 +18,7 @@ function Home() {
       setLoading(true);
       const storedUser = localStorage.getItem("userInfo");
       if (!storedUser) {
-        navigate("/signin", { replace: true });
+        navigate("/signup", { replace: true });
         return;
       }
 
@@ -42,7 +42,7 @@ function Home() {
   useEffect(() => {
     const storedUser = localStorage.getItem("userInfo");
     if (!storedUser) {
-      navigate("/signin", { replace: true });
+      navigate("/signup", { replace: true });
     } else {
       fetchPosts();
     }
