@@ -23,9 +23,9 @@ function PostForm({ fetchPosts }) {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-   const formData = new FormData();
-  formData.append("image", image); 
-  formData.append("content", content);
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append("content", content);
     try {
       setLoading(true)
       const userInfo = JSON.parse(localStorage.getItem('userInfo'))

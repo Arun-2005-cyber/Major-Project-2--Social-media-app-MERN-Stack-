@@ -7,30 +7,36 @@ import Signup from './components/Auth/Signup';
 import Profile from './Pages/Profile';
 import Home from './Pages/Home';
 import ChatPage from './components/Chat/ChatPage';
-
+import PrivateRoute from "./components/PrivateRoute";
 
 
 
 function App() {
-    const user = JSON.parse(localStorage.getItem("userInfo"));
+  const user = JSON.parse(localStorage.getItem("userInfo"));
   return (
     <>
-    <Router>
-      <Header />
-      <Container>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/profile" element={<Profile />} />
-           <Route path="/chats" element={<ChatPage user={user} />} />
-           
-        </Routes>
+      <Router>
+        <Header />
+        <Container>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/chats" element={<ChatPage user={user} />} />
+          </Routes>
 
-      </Container>
-    </Router>
+        </Container>
+      </Router>
     </>
-    
+
   )
 }
 
