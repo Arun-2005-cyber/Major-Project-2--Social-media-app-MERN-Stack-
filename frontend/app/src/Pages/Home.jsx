@@ -22,9 +22,8 @@ function Home() {
 
     const storedUser = localStorage.getItem("userInfo");
     if (!storedUser) {
-      setError("Please login to view or upload posts");
+      navigate("/signin");
       setLoading(false);
-       navigate("/signin");
       return;
     }
 
