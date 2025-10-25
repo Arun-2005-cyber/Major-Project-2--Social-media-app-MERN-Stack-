@@ -7,32 +7,44 @@ import PostForm from '../components/Posts/PostForm';
 import PostList from '../components/Posts/PostList';
 import ChatPage from '../components/Chat/ChatPage';
 import API from "../api/axios";
-
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [posts, setPosts] = useState([]);
   const [showChat, setShowChat] = useState(false);
+  const navigate = useNavigate();
 
   const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-      const { data } = await API.get('/api/posts', config);
-      setPosts(data);
-    } catch (err) {
-      setError(err.response?.data?.message || err.message);
-    } finally {
+  try {
+    setLoading(true);
+
+    const storedUser = localStorage.getItem("userInfo");
+    if (!storedUser) {
+      setError("Please login to view or upload posts");
       setLoading(false);
+       navigate("/signin");
+      return;
     }
-  };
+
+    const userInfo = JSON.parse(storedUser);
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: userInfo.token ? `Bearer ${userInfo.token}` : "",
+      },
+    };
+
+    const { data } = await API.get("/api/posts", config);
+    setPosts(data);
+  } catch (err) {
+    setError(err.response?.data?.message || err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchPosts();
