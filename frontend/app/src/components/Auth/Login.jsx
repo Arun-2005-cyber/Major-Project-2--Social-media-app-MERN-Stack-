@@ -5,7 +5,7 @@ import Message from '../Message';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios'
 import API from "../../api/axios";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../Context/AuthContext";
 
 function LoginScreen() {
   const navigate = useNavigate();
