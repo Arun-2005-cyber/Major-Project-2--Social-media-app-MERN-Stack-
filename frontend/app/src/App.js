@@ -8,7 +8,7 @@ import Profile from './Pages/Profile';
 import Home from './Pages/Home';
 import ChatPage from './components/Chat/ChatPage';
 import PrivateRoute from "./components/PrivateRoute";
-import { useAuth } from "./Context/AuthContext";
+import { AuthProvider, useAuth } from "./Context/AuthContext";
 
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
   return (
     <>
       <Router>
+        <AuthProvider>
         <Header />
         <Container>
           <Routes>
@@ -34,6 +35,7 @@ function App() {
           </Routes>
 
         </Container>
+        </AuthProvider>
       </Router>
     </>
 
