@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
+
   const navigate = useNavigate();
 
   const [expanded, setExpanded] = useState(false); // 👈 manage toggle state
@@ -22,7 +23,7 @@ function Header() {
   const closeNavbar = () => {
     setExpanded(false);
   };
-
+if (loading) return null;
   return (
     <nav className="navbar navbar-expand-lg bg-primary p-3" data-bs-theme="dark">
       <div className="container-fluid">

@@ -1,45 +1,52 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { Container, Row, Col, ListGroup, Form, Button, Card } from "react-bootstrap";
 import API from "../../api/axios";
-
-import axios from "axios";
-
+import { useAuth } from "../../context/AuthContext";
 
 const socket = io(
   process.env.NODE_ENV === "production"
-    ? "https://major-project-2-social-media-app-mern.onrender.com" // Render backend
-    : "http://localhost:5000", // Local backend
+    ? "https://major-project-2-social-media-app-mern.onrender.com"
+    : "http://localhost:5000",
   {
     withCredentials: true,
+    autoConnect: false, // 👈 important: don’t connect automatically
   }
 );
 
-
 function ChatPage() {
+  const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [chatId, setChatId] = useState(null); // ✅ store chat room id
+  const [chatId, setChatId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // ✅ Connect to socket when user logs in
+  useEffect(() => {
+    if (user?.token) {
+      socket.connect();
+    } else {
+      socket.disconnect(); // 👈 disconnect on logout
+      setMessages([]);
+      setSelectedUser(null);
+      setChatId(null);
+    }
+  }, [user]);
+
   // ✅ Fetch following users
   useEffect(() => {
     const fetchUsers = async () => {
+      if (!user?.token) return;
+
       try {
         setLoading(true);
-
-        const userInfo = localStorage.getItem("userInfo");
-        if (!userInfo) return;
-
-        const parsedUser = JSON.parse(userInfo);
-
         const config = {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${parsedUser.token}`,
+            Authorization: `Bearer ${user.token}`,
           },
         };
 
@@ -53,46 +60,39 @@ function ChatPage() {
     };
 
     fetchUsers();
-  }, []);
+  }, [user]);
 
-  // ✅ When chatId changes, join that room
+  // ✅ Join chat room when chatId changes
   useEffect(() => {
-    if (chatId) {
-      socket.emit("joinChat", chatId);
+    if (!chatId || !user) return;
 
-      socket.on("messageReceived", (msg) => {
-        setMessages((prev) => [...prev, msg]);
-      });
+    socket.emit("joinChat", chatId);
 
-      return () => {
-        socket.off("messageReceived");
-      };
-
-    }
-    return () => {
-      socket.disconnect();
-      setMessages([]);
-      setSelectedUser(null);
+    const handleMessage = (msg) => {
+      setMessages((prev) => [...prev, msg]);
     };
 
-  }, [chatId]);
+    socket.on("messageReceived", handleMessage);
 
-  // ✅ Open chat with a user (get/create chat)
-  const openChat = async (user) => {
+    return () => {
+      socket.off("messageReceived", handleMessage);
+    };
+  }, [chatId, user]);
+
+  // ✅ Open chat
+  const openChat = async (u) => {
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       const config = {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
 
-      const { data: chat } = await API.post(`/api/chats/${user._id}`, {}, config);
-      setSelectedUser(user);
+      const { data: chat } = await API.post(`/api/chats/${u._id}`, {}, config);
+      setSelectedUser(u);
       setChatId(chat._id);
 
-      // ✅ fetch messages separately
       const { data: msgs } = await API.get(`/api/chats/message/${chat._id}`, config);
       setMessages(msgs);
     } catch (err) {
@@ -100,42 +100,28 @@ function ChatPage() {
     }
   };
 
-
   // ✅ Send message
-  // inside ChatPage.js
-
   const sendMessage = async () => {
-    if (!newMessage.trim() || !chatId) return;
+    if (!newMessage.trim() || !chatId || !user?.token) return;
 
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       const config = {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
+          Authorization: `Bearer ${user.token}`,
         },
       };
 
-      // ✅ Call backend to save & emit
-      const { data } = await API.post(
-        `/api/chats/message/${chatId}`,
-        { content: newMessage },
-        config
-      );
-
-      // ⚡ No need to add manually, socket will push to us
+      await API.post(`/api/chats/message/${chatId}`, { content: newMessage }, config);
       setNewMessage("");
     } catch (err) {
       console.error("Send message failed:", err);
     }
   };
 
-
-
   return (
     <Container fluid className="p-3">
       <Row>
-        {/* Sidebar - Following users */}
         <Col md={3}>
           <h5>Following</h5>
           <ListGroup>
@@ -144,7 +130,7 @@ function ChatPage() {
                 key={u._id}
                 action
                 active={selectedUser?._id === u._id}
-                onClick={() => openChat(u)} // ✅ fetch chat on click
+                onClick={() => openChat(u)}
               >
                 {u.username}
               </ListGroup.Item>
@@ -152,7 +138,6 @@ function ChatPage() {
           </ListGroup>
         </Col>
 
-        {/* Chat window */}
         <Col md={9}>
           {selectedUser ? (
             <Card>
@@ -160,12 +145,12 @@ function ChatPage() {
                 Chat with <b>{selectedUser.username}</b>
               </Card.Header>
               <Card.Body style={{ height: "400px", overflowY: "auto" }}>
-                {messages.map((msg, index) => (
-                  <div key={index}>
-                    <strong>{msg.sender?.username || "Unknown"}: </strong> {msg.content || msg.text}
+                {messages.map((msg, i) => (
+                  <div key={i}>
+                    <strong>{msg.sender?.username || "Unknown"}: </strong>
+                    {msg.content || msg.text}
                   </div>
                 ))}
-
               </Card.Body>
               <Card.Footer>
                 <Form className="d-flex" onSubmit={(e) => e.preventDefault()}>
