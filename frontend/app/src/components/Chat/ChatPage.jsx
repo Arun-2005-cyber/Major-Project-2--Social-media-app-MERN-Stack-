@@ -34,6 +34,10 @@ function ChatPage() {
       setSelectedUser(null);
       setChatId(null);
     }
+
+     return () => {
+    socket.disconnect();
+  };
   }, [user]);
 
   // ✅ Fetch following users
