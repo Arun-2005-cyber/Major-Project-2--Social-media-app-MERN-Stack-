@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../Context/AuthContext";
 
 function Header() {
   const { user, logout, loading } = useAuth();

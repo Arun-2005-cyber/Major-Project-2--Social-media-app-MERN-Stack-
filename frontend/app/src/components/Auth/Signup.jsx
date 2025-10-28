@@ -5,18 +5,19 @@ import Message from "../Message";
 import Loader from "../Loader";
 import axios from "axios";
 import API from "../../api/axios";
+import { useAuth } from "../context/AuthContext";
 
 
 function Signup() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirect = location.search ? location.search.split("=")[1] : "/";
-
+  const { login } = useAuth();
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   const [formValues, setFormValues] = useState({
     username: "",
@@ -144,9 +145,9 @@ function Signup() {
         config
       );
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      login(data);
       clearForm();
-      navigate(redirect);
+      navigate("/profile");
     } catch (err) {
       setError(
         err.response && err.response.data.message
@@ -236,9 +237,8 @@ function Signup() {
                     type="button" // FIX: avoid submitting when clicking eye button
                   >
                     <i
-                      className={`fa ${
-                        showPassword ? "fa-eye-slash" : "fa-eye"
-                      }`}
+                      className={`fa ${showPassword ? "fa-eye-slash" : "fa-eye"
+                        }`}
                     ></i>
                   </Button>
                 </div>
@@ -268,9 +268,8 @@ function Signup() {
                     type="button" // FIX: avoid form submit
                   >
                     <i
-                      className={`fa ${
-                        showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                      }`}
+                      className={`fa ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                        }`}
                     ></i>
                   </Button>
                 </div>

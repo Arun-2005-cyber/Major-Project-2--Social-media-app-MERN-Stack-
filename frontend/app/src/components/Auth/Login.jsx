@@ -5,14 +5,14 @@ import Message from '../Message';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios'
 import API from "../../api/axios";
-
+import { useAuth } from "../context/AuthContext";
 
 function LoginScreen() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirect = location.search ? location.search.split('=')[1] : '/';
   const [loginAttempted, setLoginAttempted] = useState(false);
-
+  const { login } = useAuth(); 
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -127,7 +127,7 @@ function LoginScreen() {
         config
       );
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      login(data);
       clearForm();
       navigate("/profile");
     } catch (err) {

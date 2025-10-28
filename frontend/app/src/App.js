@@ -8,7 +8,7 @@ import Profile from './Pages/Profile';
 import Home from './Pages/Home';
 import ChatPage from './components/Chat/ChatPage';
 import PrivateRoute from "./components/PrivateRoute";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./Context/AuthContext";
 
 
 function App() {
