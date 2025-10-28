@@ -61,18 +61,27 @@ const getUserProfile = async (req, res) => {
 
 
 // 📌 Search Users
+// 📌 Search Users
 const searchUsers = async (req, res) => {
   try {
-    const query = req.query.q || "";
+    const query = req.query.q?.trim();
+
+    // If query is empty or null, return empty array
+    if (!query) {
+      return res.json([]);
+    }
+
     const users = await User.find({
       username: { $regex: query, $options: "i" },
     }).select("username profilePicture");
+
     res.json(users);
   } catch (error) {
     console.error("Search Error:", error);
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 // 📌 Follow User
 const followUser = async (req, res) => {
