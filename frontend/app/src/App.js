@@ -29,7 +29,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/chats" element={<PrivateRoute><ChatPage user={user} /></PrivateRoute>} />
+            <Route path="/chats" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
           </Routes>
 
         </Container>
