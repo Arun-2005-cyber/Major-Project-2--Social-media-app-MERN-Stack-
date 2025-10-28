@@ -67,7 +67,14 @@ function ChatPage() {
       return () => {
         socket.off("messageReceived");
       };
+
     }
+    return () => {
+      socket.disconnect();
+      setMessages([]);
+      setSelectedUser(null);
+    };
+
   }, [chatId]);
 
   // ✅ Open chat with a user (get/create chat)

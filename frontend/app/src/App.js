@@ -8,11 +8,11 @@ import Profile from './Pages/Profile';
 import Home from './Pages/Home';
 import ChatPage from './components/Chat/ChatPage';
 import PrivateRoute from "./components/PrivateRoute";
-
+import { useAuth } from "./context/AuthContext";
 
 
 function App() {
-  const user = JSON.parse(localStorage.getItem("userInfo"));
+  const { user } = useAuth();
   return (
     <>
       <Router>
@@ -30,7 +30,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/chats" element={<ChatPage user={user} />} />
+            <Route path="/chats" element={<PrivateRoute><ChatPage user={user} /></PrivateRoute>} />
           </Routes>
 
         </Container>
