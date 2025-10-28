@@ -64,7 +64,7 @@ const getUserProfile = async (req, res) => {
 // 📌 Search Users
 const searchUsers = async (req, res) => {
   try {
-    const query = req.query.q?.trim();
+    const query = req.query.keyword?.trim();
 
     // If query is empty or null, return empty array
     if (!query) {
