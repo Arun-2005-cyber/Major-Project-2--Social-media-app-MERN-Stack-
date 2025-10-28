@@ -8,7 +8,7 @@ function Header() {
 
   const navigate = useNavigate();
 
-  const [expanded, setExpanded] = useState(false); // 👈 manage toggle state
+  const [expanded, setExpanded] = useState(false); 
 
   const logoutHandler = () => {
     logout();
