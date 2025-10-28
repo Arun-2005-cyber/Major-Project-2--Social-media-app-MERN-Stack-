@@ -26,19 +26,20 @@ function ChatPage() {
 
   // ✅ Connect to socket when user logs in
   useEffect(() => {
-    if (user?.token) {
-      socket.connect();
-    } else {
-      socket.disconnect(); // 👈 disconnect on logout
-      setMessages([]);
-      setSelectedUser(null);
-      setChatId(null);
-    }
+  if (user?.token) {
+    socket.connect();
+  } else {
+    socket.disconnect();
+    setMessages([]);
+    setSelectedUser(null);
+    setChatId(null);
+  }
 
-     return () => {
+  return () => {
+    socket.removeAllListeners();
     socket.disconnect();
   };
-  }, [user]);
+}, [user?.token]);
 
   // ✅ Fetch following users
   useEffect(() => {
