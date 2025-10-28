@@ -8,11 +8,9 @@ import Profile from './Pages/Profile';
 import Home from './Pages/Home';
 import ChatPage from './components/Chat/ChatPage';
 import PrivateRoute from "./components/PrivateRoute";
-import { AuthProvider, useAuth } from "./Context/AuthContext";
-
+import { AuthProvider} from "./Context/AuthContext";
 
 function App() {
-  const { user } = useAuth();
   return (
     <>
       <Router>
