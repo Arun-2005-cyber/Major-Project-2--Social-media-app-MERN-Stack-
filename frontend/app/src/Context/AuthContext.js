@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; 
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // 👈 for initial load
   // Load user from localStorage when app starts
@@ -21,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("userInfo");
     setUser(null);
+    navigate("/login"); 
   };
 
   return (
